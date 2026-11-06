@@ -2,7 +2,7 @@
 
 ![Tidy Bar app icon](Resources/AppIcon.png)
 
-**A small, local macOS menu bar companion.** Choose which apps to tuck away, then click the sleepy cat to bring them back.
+**A small, local macOS menu bar companion.** Choose which apps to tuck away, then click your animal to bring them back.
 
 Tidy Bar has no account, telemetry, or network connection. It is built with SwiftUI and AppKit and keeps its preferences on your Mac.
 
@@ -10,9 +10,10 @@ Tidy Bar has no account, telemetry, or network connection. It is built with Swif
 
 - Select apps by name in a searchable list.
 - Hide selected apps temporarily for a 10-second trial or until you restore them.
-- Restore everything from the menu bar cat, **Show everything**, or **Option–Command–B**.
+- Restore everything from your menu bar companion, **Show everything**, or **Option–Command–B**.
 - Remember app selections and existing auto-hide and login-startup preferences.
-- Use a single cat control on macOS 27; keep the draggable divider on macOS 14–26.
+- Choose a cat, bunny, bear, fox, dog, mouse, pig, or owl for the menu bar.
+- Use a single animal control on macOS 27; keep the draggable divider on macOS 14–26.
 
 ## macOS 27: native hiding (experimental)
 
@@ -22,11 +23,11 @@ On macOS 27, Tidy Bar uses a macOS menu bar visibility service to hide selected 
 
 To use it:
 
-1. Open Settings from the cat's right-click menu, or reopen Tidy Bar in Finder.
+1. Open Settings from your animal's right-click menu, or reopen Tidy Bar in Finder.
 2. Turn on **Use native hiding · experimental**.
 3. Search for apps and select **Hide** beside the ones you want to tuck away.
 4. Choose **Try for 10 seconds** or **Hide selected apps**.
-5. Click the cat, press **Option–Command–B**, or choose **Show everything** to restore the menu bar.
+5. Click your animal, press **Option–Command–B**, or choose **Show everything** to restore the menu bar.
 
 Native hiding is off by default during migration. Existing auto-hide, login-startup, and hide-at-launch preferences are preserved, but apps are not selected automatically. Auto-hide pauses while Settings is open.
 
@@ -36,14 +37,14 @@ Native hiding is off by default during migration. Existing auto-hide, login-star
 - Some Apple menu extras may be affected, and Notification Center may be unavailable while the restriction is active. Restore the menu bar before opening those controls.
 - Tidy Bar cannot guarantee that unselected app icons remain visible for known app candidates outside `/Applications`; it refuses the request in that case. Background helpers may appear in the check.
 - macOS may still place icons in its overflow area when application menus leave too little room.
-- After display, wake, or Space changes, macOS may rearrange the bar. Saved selections remain; click the cat again after the transition.
+- After display, wake, or Space changes, macOS may rearrange the bar. Saved selections remain; click your animal again after the transition.
 - Do not run another menu bar organizer that holds a visibility restriction at the same time.
 
 See the [verification notes](docs/verification.md) and [native visibility research](docs/research/2026-11-06-native-visibility.md) for tested behavior and remaining compatibility questions.
 
 ## macOS 14–26
 
-On earlier supported macOS versions, Tidy Bar uses a draggable divider. Hold Command and drag icons to the divider's left; keep the cat on its right. This older behavior has not been newly qualified by the macOS 27 verification.
+On earlier supported macOS versions, Tidy Bar uses a draggable divider. Hold Command and drag icons to the divider's left; keep your animal on its right. This older behavior has not been newly qualified by the macOS 27 verification.
 
 ## Install and build
 

@@ -12,14 +12,14 @@ final class StatusBarController: NSObject {
     init(model: AppModel) {
         self.model = model
         control = NSStatusBar.system.statusItem(withLength: 30)
-        // Preserve the cat's placement from the overflow version. macOS 27
+        // Preserve the control's placement from the overflow version. macOS 27
         // creates no divider or helper spacers in this implementation.
         control.autosaveName = model.usesNative ? "TidyBar.OverflowV1.Control" : "TidyBar.Control"
         if !model.usesNative {
             let item = NSStatusBar.system.statusItem(withLength: 22)
             item.autosaveName = "TidyBar.Divider"
             item.button?.title = "│"
-            item.button?.toolTip = "Hold ⌘ and drag icons left of the divider. Keep the cat on its right."
+            item.button?.toolTip = "Hold ⌘ and drag icons left of the divider. Keep Tidy Bar on its right."
             divider = item
         }
         super.init()
@@ -49,7 +49,7 @@ final class StatusBarController: NSObject {
         if model.visibilityError != nil || { if case .failed = model.nativeState { return true }; return false }() {
             control.button?.image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: "Hiding needs attention")
         } else {
-            control.button?.image = CatArtwork.menuImage(hidden: hidden)
+            control.button?.image = AnimalArtwork.menuImage(animal: model.menuBarAnimal, hidden: hidden)
         }
         control.button?.toolTip = model.visibilityError ?? "Tidy Bar · \(model.stateLabel) · Click to \(model.wantsHidden ? "show" : "hide") apps (⌥⌘B)"
         control.button?.setAccessibilityValue(model.stateLabel)

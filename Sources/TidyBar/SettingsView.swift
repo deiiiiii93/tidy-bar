@@ -1,5 +1,6 @@
 import SwiftUI
 import ServiceManagement
+import TidyBarCore
 
 private enum Palette {
     static let ink = Color(red: 0.16, green: 0.26, blue: 0.22)
@@ -42,7 +43,7 @@ struct SettingsView: View {
                         .accessibilityIdentifier("visibilityState")
                     Text(model.usesNative ? "Choose your calm." : "Your menu bar, tidied.")
                         .font(.system(size: 21, weight: .semibold, design: .rounded))
-                    Text(model.usesNative ? "The same apps tuck away on every display. Click the cat to bring them back." : "Hold ⌘ and drag icons left of the divider. Keep the cat on its right.")
+                    Text(model.usesNative ? "The same apps tuck away on every display. Click your animal to bring them back." : "Hold ⌘ and drag icons left of the divider. Keep your animal on its right.")
                         .font(.system(size: 12)).foregroundStyle(Palette.muted)
                         .fixedSize(horizontal: false, vertical: true)
                     HStack {
@@ -64,6 +65,8 @@ struct SettingsView: View {
                         Button("Show everything") { model.setHidden(false) }
                     }.padding(12).background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 10))
                 }
+
+                animalPicker
 
                 if model.usesNative { appPicker }
 
@@ -94,7 +97,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(model.shortcutAvailable ? "⌥ ⌘ B · Hide or show from anywhere" : "Shortcut unavailable · another app may use ⌥⌘B")
                         .font(.system(size: 11, weight: .medium))
-                    Text("Auto-hide pauses here. Right-click the cat for settings. · v1.1.0")
+                    Text("Auto-hide pauses here. Right-click your animal for settings. · v1.1.0")
                         .font(.system(size: 10)).foregroundStyle(Palette.muted)
                 }
             }.padding(24)
@@ -103,6 +106,35 @@ struct SettingsView: View {
         .frame(width: 560, height: 730)
         .background(Palette.paper)
         .preferredColorScheme(.light)
+    }
+
+    private var animalPicker: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Your menu bar companion")
+                .font(.system(size: 13, weight: .semibold))
+            Text("Choose a little face for your menu bar.")
+                .font(.system(size: 11)).foregroundStyle(Palette.muted)
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
+                ForEach(MenuBarAnimal.allCases) { animal in
+                    Button { model.menuBarAnimal = animal } label: {
+                        VStack(spacing: 4) {
+                            Image(nsImage: AnimalArtwork.menuImage(animal: animal, hidden: false, size: 38))
+                                .renderingMode(.template).resizable().frame(width: 38, height: 38)
+                            Text(animal.name).font(.system(size: 10, weight: .medium))
+                        }
+                        .frame(maxWidth: .infinity).padding(.vertical, 8)
+                        .background(model.menuBarAnimal == animal ? Palette.mint : Palette.paper,
+                                    in: RoundedRectangle(cornerRadius: 9))
+                        .overlay(RoundedRectangle(cornerRadius: 9)
+                            .stroke(model.menuBarAnimal == animal ? Palette.ink : .clear, lineWidth: 1.5))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(animal.name)
+                    .accessibilityValue(model.menuBarAnimal == animal ? "Selected" : "Not selected")
+                    .accessibilityIdentifier("animal.\(animal.rawValue)")
+                }
+            }
+        }.padding(16).background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 14))
     }
 
     private var appPicker: some View {

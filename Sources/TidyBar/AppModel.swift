@@ -32,6 +32,12 @@ final class AppModel: ObservableObject {
     }
     @Published var autoHideDelay: Int { didSet { defaults.set(autoHideDelay, forKey: "autoHideDelay"); reschedule() } }
     @Published var hideAtLaunch: Bool { didSet { defaults.set(hideAtLaunch, forKey: "hideAtLaunch") } }
+    @Published var menuBarAnimal: MenuBarAnimal {
+        didSet {
+            defaults.set(menuBarAnimal.rawValue, forKey: "menuBarAnimalV1")
+            onVisibilityChange?(isHidden)
+        }
+    }
     @Published private(set) var loginEnabled = false
     @Published private(set) var loginNeedsApproval = false
     @Published var loginError: String?
@@ -57,6 +63,7 @@ final class AppModel: ObservableObject {
         let stored = defaults.integer(forKey: "autoHideDelay")
         autoHideDelay = [0, 10, 30, 60].contains(stored) ? stored : 0
         hideAtLaunch = defaults.bool(forKey: "hideAtLaunch")
+        menuBarAnimal = MenuBarAnimal.fromPreference(defaults.string(forKey: "menuBarAnimalV1"))
         nativeEnabled = defaults.bool(forKey: "nativeVisibilityEnabledV1")
         hiddenBundleIDs = Set(defaults.stringArray(forKey: "hiddenBundleIDsV1") ?? [])
         knownNames = defaults.dictionary(forKey: "knownAppNamesV1") as? [String: String] ?? [:]
@@ -83,7 +90,7 @@ final class AppModel: ObservableObject {
 
     var nativeUnavailableReason: String? {
         if !Bundle.main.bundleURL.path.hasPrefix("/Applications/") {
-            return "Run the updated Tidy Bar from /Applications before hiding, so macOS keeps the cat available."
+            return "Run the updated Tidy Bar from /Applications before hiding, so macOS keeps its menu bar control available."
         }
         return NativeMenuBarBackend().unavailableReason
     }
