@@ -70,9 +70,6 @@ final class StatusBarController: NSObject {
         toggle.keyEquivalentModifierMask = [.command, .option]
         toggle.target = self
         menu.addItem(toggle)
-        let restore = NSMenuItem(title: "Show everything", action: #selector(restoreAll), keyEquivalent: "")
-        restore.target = self
-        menu.addItem(restore)
         if model.usesNative {
             let trial = NSMenuItem(title: "Try hiding for 10 seconds", action: #selector(tryHiding), keyEquivalent: "")
             trial.target = self
@@ -91,7 +88,6 @@ final class StatusBarController: NSObject {
     }
 
     @objc private func toggleFromMenu() { model.toggle() }
-    @objc private func restoreAll() { model.setHidden(false) }
     @objc private func tryHiding() { model.runTrial() }
     @objc private func openSettings() { onOpenSettings?() }
     @objc private func quitApp() { NSApp.terminate(nil) }
