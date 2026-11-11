@@ -189,19 +189,16 @@ final class AppModel: ObservableObject {
         let unlistedRunningIDs = runningIDs.subtracting(recognizedRunningIDs).filter {
             $0 != own && !$0.hasPrefix("com.apple.")
         }
-        let effectiveHiddenIDs = hiddenBundleIDs.union(unlistedRunningIDs)
+        let outsideApplicationsIDs = applications.compactMap { app in
+            app.isRunning && !app.id.hasPrefix("com.apple.")
+                && !(app.applicationPath?.hasPrefix("/Applications/") ?? false)
+                ? app.id : nil
+        }
+        let effectiveHiddenIDs = hiddenBundleIDs
+            .union(unlistedRunningIDs)
+            .union(outsideApplicationsIDs)
         guard !runningIDs.intersection(effectiveHiddenIDs.subtracting([own])).isEmpty else {
             refuse("Choose at least one app to hide.")
-            return
-        }
-
-        // Keep the safety check for selectable apps outside /Applications.
-        let outside = applications.filter {
-            $0.isRunning && !hiddenBundleIDs.contains($0.id)
-                && !($0.applicationPath?.hasPrefix("/Applications/") ?? false)
-        }
-        if !outside.isEmpty {
-            refuse("macOS may also hide these apps because they run outside /Applications: \(outside.map(\.name).joined(separator: ", ")). Move them into /Applications or select them to hide before trying again.")
             return
         }
         native.hide(running: runningIDs, hidden: effectiveHiddenIDs, own: own)
