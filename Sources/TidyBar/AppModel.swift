@@ -56,6 +56,7 @@ final class AppModel: ObservableObject {
     private var workspaceObservers: [NSObjectProtocol] = []
     private var knownNames: [String: String]
     private var runningIDs: Set<String> = []
+    private var recognizedRunningIDs: Set<String> = []
     private let own = Bundle.main.bundleIdentifier ?? "com.tidybar.app"
 
     init(defaults: UserDefaults = .standard) {
@@ -129,6 +130,7 @@ final class AppModel: ObservableObject {
             byID[id] = app
             knownNames[id] = app.localizedName ?? id
         }
+        recognizedRunningIDs = Set(byID.keys)
         // Keep saved choices even after an app exits. Unselected historical
         // helper processes need not clutter the settings list.
         let ids = Set(byID.keys).union(hiddenBundleIDs)
@@ -178,11 +180,22 @@ final class AppModel: ObservableObject {
 
     private func applyNative() {
         guard nativeEnabled else { refuse("Enable native hiding below, then choose the apps to tuck away."); return }
-        guard !hiddenBundleIDs.isEmpty else { refuse("Choose at least one app to hide."); return }
         if let reason = nativeUnavailableReason { refuse(reason); return }
-        // Without Accessibility we cannot distinguish an app with no status
-        // item from one whose icon must remain visible. Refuse known outside-
-        // Applications candidates rather than silently suppressing them.
+
+        // Background agents and other unlisted third-party processes cannot be
+        // selected in the app picker. Omit them from the native allowlist by
+        // treating them as hidden for this request; never default-hide Apple
+        // system apps or Tidy Bar itself.
+        let unlistedRunningIDs = runningIDs.subtracting(recognizedRunningIDs).filter {
+            $0 != own && !$0.hasPrefix("com.apple.")
+        }
+        let effectiveHiddenIDs = hiddenBundleIDs.union(unlistedRunningIDs)
+        guard !runningIDs.intersection(effectiveHiddenIDs.subtracting([own])).isEmpty else {
+            refuse("Choose at least one app to hide.")
+            return
+        }
+
+        // Keep the safety check for selectable apps outside /Applications.
         let outside = applications.filter {
             $0.isRunning && !hiddenBundleIDs.contains($0.id)
                 && !($0.applicationPath?.hasPrefix("/Applications/") ?? false)
@@ -191,7 +204,7 @@ final class AppModel: ObservableObject {
             refuse("macOS may also hide these apps because they run outside /Applications: \(outside.map(\.name).joined(separator: ", ")). Move them into /Applications or select them to hide before trying again.")
             return
         }
-        native.hide(running: runningIDs, hidden: hiddenBundleIDs, own: own)
+        native.hide(running: runningIDs, hidden: effectiveHiddenIDs, own: own)
     }
 
     private func refuse(_ message: String) {

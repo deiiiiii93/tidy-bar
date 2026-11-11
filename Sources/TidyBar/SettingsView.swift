@@ -145,6 +145,9 @@ struct SettingsView: View {
             Text("Choose apps below. All icons from one app hide together. Some listed apps have no menu bar icon.")
                 .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
+            Text("Unlisted background apps are hidden by default while native hiding is active.")
+                .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
                 TextField("Search apps", text: $search).textFieldStyle(.roundedBorder)
                     .accessibilityIdentifier("appSearch")
